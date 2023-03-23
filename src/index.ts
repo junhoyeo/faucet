@@ -1,12 +1,11 @@
-import Wallet from 'ethereumjs-wallet';
-import { Wallet as EthersWallet, JsonRpcProvider, parseEther } from 'ethers';
+import { HDNodeWallet, JsonRpcProvider, Wallet, parseEther } from 'ethers';
 
 import { requestFaucet } from './faucet';
 
-const generateRandomWallet = () => Wallet.generate();
-const sendFunds = async (fromWallet: Wallet, toAddress: string, amount: string) => {
+const generateRandomWallet = () => Wallet.createRandom();
+const sendFunds = async (fromWallet: HDNodeWallet, toAddress: string, amount: string) => {
   const provider = new JsonRpcProvider('https://api.test.wemix.com');
-  const signer = new EthersWallet(fromWallet.getPrivateKeyString(), provider);
+  const signer = fromWallet.connect(provider);
 
   const tx: any = {
     from: signer.address,
@@ -30,21 +29,21 @@ const sendFunds = async (fromWallet: Wallet, toAddress: string, amount: string) 
 };
 
 const main = async () => {
-  const randomWallets = Array.from({ length: 100 }, () => generateRandomWallet());
+  const randomWallets = Array.from({ length: 10 }, () => generateRandomWallet());
   const destinationAddress = '0x7777777141f111cf9F0308a63dbd9d0CaD3010C4';
 
   console.log('Generated wallets:');
   randomWallets.forEach((wallet) => {
-    console.log(`Address: ${wallet.getAddressString()} - Private Key: ${wallet.getPrivateKeyString()}`);
+    console.log(`Address: ${wallet.address} - Private Key: ${wallet.privateKey}`);
   });
 
   for (const wallet of randomWallets) {
-    await requestFaucet(wallet.getAddressString()).catch(() => {
-      console.log('error requesting faucet for', wallet.getAddressString());
+    await requestFaucet(wallet.address).catch(() => {
+      console.log('error requesting faucet for', wallet.address);
     });
-    console.log('faucet request to', wallet.getAddressString());
+    console.log('faucet request to', wallet.address);
     await sendFunds(wallet, destinationAddress, '9.99').catch(() => {
-      console.log('error sending funds from', wallet.getAddressString());
+      console.log('error sending funds from', wallet.address);
     });
   }
 };

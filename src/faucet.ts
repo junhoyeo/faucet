@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { SupportedNetwork } from './types';
+
 const headers = {
   accept: 'application/json',
   'accept-language': 'ko',
@@ -14,7 +16,7 @@ const headers = {
   'sec-fetch-site': 'same-origin',
 };
 
-export const requestFaucet = async (network: 'wemix' | 'klaytn', account: string) => {
+export const requestFaucet = async (network: SupportedNetwork, account: string) => {
   if (network === 'wemix') {
     const { data } = await axios.post(
       'https://wallet.test.wemix.com/faucet-api/',

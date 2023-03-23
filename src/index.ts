@@ -3,32 +3,59 @@ import { HDNodeWallet, JsonRpcProvider, Wallet, parseEther } from 'ethers';
 import { requestFaucet } from './faucet';
 
 const generateRandomWallet = () => Wallet.createRandom();
-const sendFunds = async (fromWallet: HDNodeWallet, toAddress: string, amount: string) => {
-  const provider = new JsonRpcProvider('https://api.test.wemix.com');
+const sendFunds = async (
+  network: 'wemix' | 'klaytn',
+  fromWallet: HDNodeWallet,
+  toAddress: string,
+  amount: string,
+) => {
+  const RPC_URL =
+    network === 'wemix' ? 'https://api.test.wemix.com' : 'https://klaytn-baobab-rpc.allthatnode.com:8551';
+  const provider = new JsonRpcProvider(RPC_URL);
   const signer = fromWallet.connect(provider);
 
-  const tx: any = {
+  let tx: any = {
     from: signer.address,
     to: toAddress,
     value: parseEther(amount),
   };
 
-  const gasPrice = await provider.getFeeData();
-  const gasEstimate = await provider.estimateGas(tx);
-
-  tx.gasLimit = gasEstimate;
-  tx.gasPrice = gasPrice.gasPrice;
+  if (network === 'wemix') {
+    const gasPrice = await provider.getFeeData();
+    const gasEstimate = await provider.estimateGas(tx);
+    tx = { ...tx, gasLimit: gasEstimate, gasPrice: gasPrice.gasPrice };
+  }
+  if (network === 'klaytn') {
+    tx = { ...tx, gas: '85000000', gasPrice: '25000000000' };
+  }
 
   try {
     const sendTransaction = await signer.sendTransaction(tx);
     const receipt = await sendTransaction.wait();
-    console.log(`Transaction successful! Sent ${amount} Wemix tokens to ${toAddress}. Receipt:`, receipt);
+    console.log(
+      `Transaction successful! Sent ${amount} ${
+        network === 'wemix' ? 'WEMIX' : 'KLAY'
+      } tokens to ${toAddress}. Receipt:`,
+      receipt,
+    );
   } catch (error) {
     console.error('Transaction failed:', error);
   }
 };
 
 const main = async () => {
+  let network: 'wemix' | 'klaytn' | undefined;
+  network = 'klaytn';
+  let amount = '0';
+
+  // @ts-ignore
+  if (network === 'wemix') {
+    amount = '9.99';
+  }
+  if (network === 'klaytn') {
+    amount = '149.99';
+  }
+
   const randomWallets = Array.from({ length: 10 }, () => generateRandomWallet());
   const destinationAddress = '0x7777777141f111cf9F0308a63dbd9d0CaD3010C4';
 
@@ -38,11 +65,15 @@ const main = async () => {
   });
 
   for (const wallet of randomWallets) {
-    await requestFaucet(wallet.address).catch(() => {
+    await requestFaucet(network, wallet.address).catch(() => {
       console.log('error requesting faucet for', wallet.address);
     });
     console.log('faucet request to', wallet.address);
-    await sendFunds(wallet, destinationAddress, '9.99').catch(() => {
+    if (network === 'klaytn') {
+      await new Promise((resolve) => setTimeout(resolve, 2_000));
+    }
+    await sendFunds(network, wallet, destinationAddress, amount).catch((e) => {
+      console.log(e);
       console.log('error sending funds from', wallet.address);
     });
   }

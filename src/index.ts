@@ -1,10 +1,11 @@
 import { HDNodeWallet, JsonRpcProvider, Wallet, parseEther } from 'ethers';
 
 import { requestFaucet } from './faucet';
+import { SupportedNetwork } from './types';
 
 const generateRandomWallet = () => Wallet.createRandom();
 const sendFunds = async (
-  network: 'wemix' | 'klaytn',
+  network: SupportedNetwork,
   fromWallet: HDNodeWallet,
   toAddress: string,
   amount: string,
@@ -43,12 +44,9 @@ const sendFunds = async (
   }
 };
 
-const main = async () => {
-  let network: 'wemix' | 'klaytn' | undefined;
-  network = 'klaytn';
+const main = async (network: SupportedNetwork, destinationAddress: string) => {
   let amount = '0';
 
-  // @ts-ignore
   if (network === 'wemix') {
     amount = '9.99';
   }
@@ -57,7 +55,6 @@ const main = async () => {
   }
 
   const randomWallets = Array.from({ length: 10 }, () => generateRandomWallet());
-  const destinationAddress = '0x7777777141f111cf9F0308a63dbd9d0CaD3010C4';
 
   console.log('Generated wallets:');
   randomWallets.forEach((wallet) => {
@@ -78,4 +75,6 @@ const main = async () => {
     });
   }
 };
-main();
+
+const destinationAddress = '0x7777777141f111cf9F0308a63dbd9d0CaD3010C4';
+main('klaytn', destinationAddress);

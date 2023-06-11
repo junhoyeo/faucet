@@ -1,4 +1,10 @@
-# faucet
+# @junhoyeo/faucet
+
+> Automation for **WEMIX**(Wemix Testnet) and **KLAY**(Klaytn Baobab Testnet) Faucet
+
+```bash
+yarn add @junhoyeo/faucet
+```
 
 ```ts
 import { requestFunds } from '@junhoyeo/faucet';

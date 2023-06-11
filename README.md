@@ -1,6 +1,8 @@
 # @junhoyeo/faucet
 
-> Automation for **WEMIX**(Wemix Testnet) and **KLAY**(Klaytn Baobab Testnet) Faucet
+> 🤖 Automation for Bootstrapping Testnet Tokens in Blockchain Faucets — Currently Supports WEMIX and KLAY
+- WEMIX in [WEMIX Testnet](https://wallet.test.wemix.com/faucet)
+- KLAY in [Klaytn Baobab(Testnet)](https://baobab.wallet.klaytn.foundation/faucet)
 
 ```bash
 yarn add @junhoyeo/faucet

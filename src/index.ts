@@ -44,7 +44,11 @@ const sendFunds = async (
   }
 };
 
-const main = async (network: SupportedNetwork, destinationAddress: string) => {
+export const requestFunds = async (
+  network: SupportedNetwork,
+  destinationAddress: string,
+  totalAmount: number,
+) => {
   let amount = '0';
 
   if (network === 'wemix') {
@@ -54,7 +58,8 @@ const main = async (network: SupportedNetwork, destinationAddress: string) => {
     amount = '149.99';
   }
 
-  const randomWallets = Array.from({ length: 10 }, () => generateRandomWallet());
+  const numberOfWallets = Math.ceil(totalAmount / Number(amount));
+  const randomWallets = Array.from({ length: numberOfWallets }, () => generateRandomWallet());
 
   console.log('Generated wallets:');
   randomWallets.forEach((wallet) => {
@@ -75,6 +80,3 @@ const main = async (network: SupportedNetwork, destinationAddress: string) => {
     });
   }
 };
-
-const destinationAddress = '0x7777777141f111cf9F0308a63dbd9d0CaD3010C4';
-main('klaytn', destinationAddress);

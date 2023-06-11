@@ -1,8 +1,8 @@
 {
-  "name": "wemix-faucet",
+  "name": "@junhoyeo/faucet",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/junhoyeo/wemix-faucet",
+  "repository": "https://github.com/junhoyeo/faucet",
   "author": "Junho Yeo <i@junho.io>",
   "license": "MIT",
   "scripts": {

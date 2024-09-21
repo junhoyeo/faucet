@@ -11,7 +11,7 @@ const sendFunds = async (
   amount: string,
 ) => {
   const RPC_URL =
-    network === 'wemix' ? 'https://api.test.wemix.com' : 'https://klaytn-baobab-rpc.allthatnode.com:8551';
+    network === 'wemix' ? 'https://api.test.wemix.com' : 'https://public-en-kairos.node.kaia.io';
   const provider = new JsonRpcProvider(RPC_URL);
   const signer = fromWallet.connect(provider);
 
@@ -55,7 +55,7 @@ export const requestFunds = async (
     amount = '9.99';
   }
   if (network === 'klaytn') {
-    amount = '149.99';
+    amount = '49.99';
   }
 
   const numberOfWallets = Math.ceil(totalAmount / Number(amount));
